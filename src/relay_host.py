@@ -15,14 +15,16 @@ relay_client.listen(1)
 
 
 def serve_connection(client_conn):
-    request = client_conn.recv(1000000)
-    print("Request from client: {}".format(request.split(b"\r\n")[0]))
+    while True:
+        request = client_conn.recv(4096)
+        print("Request from client: {}".format(request.split(b"\r\n")[0]))
 
-    relay_server_conn.send(request)
-    response = relay_server_conn.recv(1000000)
-    print("Response from relayed server: {}".format(response.split(b"\r\n")[0]))
+        relay_server_conn.send(request)
+        response = relay_server_conn.recv(4096)
+        print("Response from relayed server: {}".format(response.split(b"\r\n")[0]))
 
-    client_conn.send(response)
+        client_conn.send(response)
+
     client_conn.close()
 
 
